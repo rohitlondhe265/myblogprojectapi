@@ -23,8 +23,10 @@ export async function GET(request) {
     ...(category && { category }), // Include category condition if provided
     ...(search && { metaKeywords: { $regex: search, $options: "i" } }), // Include tag condition using regex
   };
+  const populateOptions = [{ path: "category", select: "title" }];
   const options = {
-    populate: "category",
+    select: "title banner category metaDescription slug updatedAt createdAt",
+    populate: populateOptions,
     skip: (page - 1) * perPage,
     limit: perPage,
     sort: { createdAt: -1 }, // Sort by date in descending order

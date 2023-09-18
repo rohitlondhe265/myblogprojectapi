@@ -4,12 +4,17 @@ import { NextResponse } from "next/server";
 
 export async function GET(request, { params }) {
   const { slug } = params;
-
   try {
     await dbConnect();
-    const post = await Post.findOne({ slug }).populate("category");
+    // const post = await Post.findOne({ slug });
+    const populateOptions = [
+      { path: "category", select: "title" },
+      { path: "faqs", select: "question answer" },
+      { path: "comments", select: "content user email" },
+    ];
+    const post = await Post.findOne({ slug }).populate(populateOptions);
     if (!post) {
-      return new NextResponse("", { status: 404 });
+      return new NextResponse("Not found", { status: 404 });
     }
     return new NextResponse(JSON.stringify(post), { status: 200 });
   } catch (error) {
@@ -35,7 +40,7 @@ export async function DELETE(request, { params }) {
 
   try {
     await dbConnect();
-    const deletedPost = await Post.findByIdAndDelete(slug);
+    const deletedPost = await Post.findOneAndDelete({ slug });
     if (!deletedPost) {
       return new NextResponse("Not found", { status: 404 });
     }

@@ -16,11 +16,16 @@ const postSchema = new mongoose.Schema(
       required: true,
     },
     category: { type: mongoose.Schema.Types.ObjectId, ref: "Category" },
+    faqs: [
+      {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "Faqs",
+      },
+    ],
     comments: [
       {
-        content: String,
-        email: String,
-        user: String,
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "Comments",
       },
     ],
     metaDescription: String,
