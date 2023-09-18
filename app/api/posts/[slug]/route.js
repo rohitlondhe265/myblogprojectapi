@@ -9,8 +9,8 @@ export async function GET(request, { params }) {
     // const post = await Post.findOne({ slug });
     const populateOptions = [
       { path: "category", select: "title" },
-      { path: "faqs", select: "question answer" },
-      { path: "comments", select: "content user email" },
+      // { path: "faqs", select: "question answer" },
+      // { path: "comments", select: "content user email" },
     ];
     const post = await Post.findOne({ slug }).populate(populateOptions);
     if (!post) {
