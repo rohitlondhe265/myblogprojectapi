@@ -47,10 +47,15 @@ export async function DELETE(request) {
   const { id } = await request.json();
   try {
     await dbConnect();
-    const deletedPost = await Comments.findByIdAndDelete(id);
-    if (!deletedPost) {
+    const deletedComment = await Comments.findByIdAndDelete(id);
+    if (!deletedComment) {
       return new NextResponse("Not found", { status: 404 });
     }
+    // Remove the FAQ reference from associated Post documents
+    await Post.updateMany(
+      { comments: deletedComment._id },
+      { $pull: { comments: deletedComment._id } }
+    );
     return new NextResponse("Post deleted successfully", { status: 200 });
   } catch (error) {
     return new NextResponse("Database Error", { status: 500 });

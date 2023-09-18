@@ -47,10 +47,15 @@ export async function DELETE(request) {
   const { id } = await request.json();
   try {
     await dbConnect();
-    const deletedPost = await Faqs.findByIdAndDelete(id);
-    if (!deletedPost) {
+    const deletedFaq = await Faqs.findByIdAndDelete(id);
+    if (!deletedFaq) {
       return new NextResponse("Not found", { status: 404 });
     }
+    // Remove the FAQ reference from associated Post documents
+    await Post.updateMany(
+      { faqs: deletedFaq._id },
+      { $pull: { faqs: deletedFaq._id } }
+    );
     return new NextResponse("Post deleted successfully", { status: 200 });
   } catch (error) {
     return new NextResponse("Database Error", { status: 500 });

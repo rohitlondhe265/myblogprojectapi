@@ -20,6 +20,7 @@ export async function GET(request) {
     category = await getCatId(slug);
   }
   const query = {
+    status: "published",
     ...(category && { category }), // Include category condition if provided
     ...(search && { metaKeywords: { $regex: search, $options: "i" } }), // Include tag condition using regex
   };
