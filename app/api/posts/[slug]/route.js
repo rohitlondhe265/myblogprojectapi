@@ -1,4 +1,7 @@
 import dbConnect from "@/db/dbConnect";
+import Category from "@/db/models/categorySchema";
+import Comments from "@/db/models/commentSchema";
+import Faqs from "@/db/models/faqSchema";
 import Post from "@/db/models/postSchema";
 import { NextResponse } from "next/server";
 
@@ -6,11 +9,10 @@ export async function GET(request, { params }) {
   const { slug } = params;
   try {
     await dbConnect();
-    // const post = await Post.findOne({ slug });
     const populateOptions = [
-      { path: "category", select: "title" },
-      // { path: "faqs", select: "question answer" },
-      // { path: "comments", select: "content user email" },
+      { path: "category", select: "title", model: Category },
+      { path: "faqs", select: "question answer", model: Faqs },
+      { path: "comments", select: "content user email", model: Comments },
     ];
     const post = await Post.findOne({ slug }).populate(populateOptions);
     if (!post) {
@@ -18,7 +20,8 @@ export async function GET(request, { params }) {
     }
     return new NextResponse(JSON.stringify(post), { status: 200 });
   } catch (error) {
-    return new NextResponse("Database Error", { status: 500 });
+    const err = { msg: "Database Error", error };
+    return new NextResponse(err, { status: 500 });
   }
 }
 
